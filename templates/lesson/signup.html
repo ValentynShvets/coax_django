@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}SignUp{% endblock %}
+
+{% block main %}
+
+
+    <form action="{% url 'authentications:signup' %}" method="post">
+        {% csrf_token %}
+
+
+        {% for field in form %}
+           <p>
+               {{ field }}<br>
+                {% if field.help_text %}
+
+             <small style="font-size: 10px">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </p>
+        {% endfor %}
+        <button class="btn btn-primary" type="submit">Зареєструватись</button>
+    </form>
+
+{% endblock %}
