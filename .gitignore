@@ -15,6 +15,7 @@ downloads/
 eggs/
 .eggs/
 lib/
+.idea/
 lib64/
 parts/
 sdist/
@@ -26,6 +27,7 @@ share/python-wheels/
 .installed.cfg
 *.egg
 MANIFEST
+secret.py
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

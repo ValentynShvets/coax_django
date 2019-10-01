@@ -23,6 +23,7 @@ class LessonSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         author = validated_data.pop('author')
+        print(self.context)
         user_id = User.objects.filter(email=author).values_list('pk')
         lesson = Lesson.objects.create(author_id=user_id[0][0], **validated_data)
         return lesson

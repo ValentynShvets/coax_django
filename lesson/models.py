@@ -4,7 +4,6 @@ from authentications.models import User
 
 
 class Lesson(models.Model):
-    # id = models.IntegerField(primary_key=True)
     title = models.CharField(max_length=255)
     lesson = models.CharField(max_length=5000)
     author = models.ForeignKey(User, on_delete=models.CASCADE)

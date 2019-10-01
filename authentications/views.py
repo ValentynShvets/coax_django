@@ -13,30 +13,16 @@ from authentications.forms import SignUpForm
 from lesson.models import Lesson
 from .models import User
 
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from django.shortcuts import render
-from drf_yasg.utils import swagger_auto_schema
 from rest_framework import status, viewsets
-from rest_framework.renderers import JSONRenderer
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from django.shortcuts import render
 from django.contrib.auth import logout, authenticate, login
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, HttpResponse, redirect, render_to_response
 from django.template.context_processors import csrf
-from django.urls import reverse_lazy, reverse
-from django.views import generic
 from django.views.generic import TemplateView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-
-from .serializers import *
-
-# from COAX_BOOTCAMP.bootcamp.lesson.serializers import LessonSerializer
 from .forms import SignUpForm
 from django.contrib import messages
 from .models import *

@@ -19,8 +19,7 @@ class MainView(TemplateView):
     template_name = "lesson/home.html"
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(object_list=None, **kwargs)
-        # context['cash'] = balance(self.request)
+        context = super().get_context_data(data=Lesson.objects.all(), **kwargs)
         return context
 
 
@@ -53,19 +52,18 @@ class LessonAPIViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     renderer_classes = (JSONRenderer,)
 
-
-class LessonApiViews(APIView):
-    def get(self, *args, **kwargs):
-        instances = Lesson.objects.all()
-        ser = LessonSerializer(instances, many=True)
-
-        return Response(data=ser.data)
-
-    def post(self, *args, **kwargs):
-        ser = LessonSerializer(data=self.request.data)
-        ser.is_valid(raise_exception=True)
-        ser.save()
-        return Response(data=ser.data, status=status.HTTP_201_CREATED)
+# class LessonApiViews(APIView):
+# def get(self, *args, **kwargs):
+#     instances = Lesson.objects.all()
+#     ser = LessonSerializer(instances, many=True)
+#
+#     return Response(data=ser.data)
+#
+# def post(self, *args, **kwargs):
+#     ser = LessonSerializer(data=self.request.data)
+#     ser.is_valid(raise_exception=True)
+#     ser.save()
+#     return Response(data=ser.data, status=status.HTTP_201_CREATED)
 
 
 # def vote(request, lesson_id):
