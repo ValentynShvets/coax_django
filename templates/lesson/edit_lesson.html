@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Edit lesson{% endblock %}
+{% block main %}
+    <form action="{% url 'edit' %}?lesson_id={{ lesson.id }}" method="post">
+    {% csrf_token %}
+        {%if user.id%}
+{#            <label style="color:red;" class="error">{{login_error}}</label>#}
+{#            {%endif%}#}
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="title" placeholder="Title" value="{{ lesson.title }}" type="text">
+        </div>
+        <div class="form-group">
+            <textarea name="lesson" cols="75" rows="3" placeholder="Lesson"  >{{ lesson.lesson }}</textarea>
+{#            <input class="form-control" name="lesson" placeholder="Lesson" type="text">#}
+        </div>
+        <button class="btn btn-primary" type="submit">Save</button>
+    </form>
+    {% endif %}
+{% endblock %}

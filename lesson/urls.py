@@ -5,12 +5,13 @@ from . import views
 
 app_name = 'lesson'
 router = SimpleRouter()
-router.register('', views.LessonAPIViewSet, base_name='home')
+router.register('', views.LessonAPIViewSet, base_name='lessons')
 urlpatterns = [
-      path('', views.MainView.as_view(), name='home'),
-] + router.urls
+
+              ] + router.urls
 
 base_patterns = [
-    path('lessons/', views.LessonAPIViewSet.as_view({'get': 'list'}), name='lessons'),
+
+    # path('lessons/', views.LessonAPIViewSet.as_view({'get': 'list'}), name='lessons'),
 
 ]

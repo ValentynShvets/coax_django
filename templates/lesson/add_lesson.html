@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Edit lesson{% endblock %}
+{% block main %}
+    <form action="{% url 'add_lesson' %}" method="post">
+    {% csrf_token %}
+        {%if user.id%}
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="title" placeholder="Title" type="text">
+        </div>
+        <div class="form-group">
+            <textarea name="lesson" class="form-control" cols="75" rows="3" placeholder="Lesson"  ></textarea>
+{#            <input class="form-control" name="lesson" placeholder="Lesson" type="text">#}
+        </div>
+        <button class="btn btn-primary" type="submit">Add</button>
+    </form>
+    {% endif %}
+{% endblock %}

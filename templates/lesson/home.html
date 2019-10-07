@@ -1,52 +1,140 @@
 {% extends "base.html" %}
-<style>
-{#    article {#}
-{#    width: 900px;#}
-{#}#}
-{#figure {#}
-{#    width: 25%;#}
-{#    display: inline-block;#}
-{#    text-align: center;#}
-{#}#}
-    p {
- border: 2px solid red; /* Толщина рамки в пикселах,
-                           тип границы (в данном случае сплошная линия) и
-                           цвет линии */
- padding: 5px; /* Расстояние от текста до рамки */
-}
-{#.outline {#}
-{#    border: 1px solid red;#}
-{#    padding: 10px;#}
-{#   }#}
-{#    div {#}
-{#    width: 100px;	height: 100px; /* Размеры */#}
-{#    background: #fc0; /* Цвет фона */#}
-{#    outline: 2px solid #000; /* Чёрная рамка */#}
-{#    border: 3px solid #fff; /* Белая рамка */#}
-{#    border-radius: 10px; /* Радиус скругления */#}
-{#   }#}
-</style>
+{% load lesson_tags %}
 {% block title %}Home{% endblock %}
+<style>
+
+</style>
 
 {% block main %}
-
-    {% for item in data %}
+    <center><h1  class="your-form-selector">Lessons</h1></center>
+    {% if user.id %}
+    <p align="right"><button target="_blank" onclick="window.open(href='{% url 'add_lesson' %}',this.target,'width= 800,height=800,scrollbars=1');return false;">add lesson</button>
+</p>
+    {% endif %}
+    {% for item in pages %}
         <div style="border: 2px solid #000000; padding: 5px;">
             <strong>{{ item.title }}</strong>
-            ({{ item.author }})<br>
-            {{ item.lesson }}
-{#        <form  action = "{% url 'lesson:vote' question.id %}" method = "post">#}
-{#    {% csrf_token %}#}
-{#{% for choice in question.choice_set.all %}#}
-{#    {{ choice.choice_text }}#}
-{#    <button type="submit" name="choice"  value="{{ choice.id }}" >+1👍</button>#}
-{##}
-{#        <button type="submit" name="minus" value="{{ choice.id }}" >-1👎</button>#}
-{# ({{ choice.votes }})<br>#}
-{#    {% endfor %}#}
-{#</form>#}
-            </div>
+            ({{ item.author.email }})<br>
+            {{ item.lesson }}<br><br><br>
+            {#<h2 align="right"> 👍</h2>#}
+
+{#                {% if item.likes|check_if_user_liked:request.user.id %}#}
+
+        {% if request.user.id == item.author.id or user.is_superuser %}
+            <button target="_blank" onclick="window.open(href='{% url 'edit' %}?lesson_id={{ item.id }}',this.target,'width= 800,height=800,scrollbars=1');return false;">edit</button>
+            <form class="your-form-selector" action="{% url 'edit' %}?lesson_id={{ item.id }}" method="post">
+            {% csrf_token %}
+                <input type="hidden" name="delete" value="1">
+            <button color="white" type="submit" >delete</button>
+            </form>
+        {% endif %}
+        <form  style="float:right;" class="your-form-selector" action="{% url 'like' item.id %}" method="post">
+                    {% csrf_token %}
+                {{ page }}
+                    <input type="hidden" name="url" value="{{ page_num }}">
+                    {% if item.likes|check_if_user_liked:request.user.id %}
+                    <h2 ><button class="button" type="submit" > 👍{{ item.likes.count }}
+                    </button></h2>
+                    {% else %}
+                   <h2 ><button class="button" type="submit" > 👍🏻{{ item.likes.count }}
+                    </button></h2>
+                {% endif %}
+                </form>
+        <br>
+        <div>
+            <br>
+        </div>
+        </div>
+
         <br>
     {% endfor %}
-<span class="likebtn-wrapper" data-lang="ru" data-identifier="item_1"></span>
+
+    <style>
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-size: 16px;
+            font-family: "PT Sans", sans-serif;
+        }
+
+        .paginator {
+            width: 280px;
+            padding: 10px;
+            margin: 30px auto;
+            white-space: nowrap;
+        {#background: #ecf0f1;#}
+        }
+
+        .paginator a,
+        .paginator span {
+            display: inline-block;
+            min-width: 20px;
+            height: 40px;
+            padding: 0 10px;
+            line-height: 40px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            text-align: center;
+            vertical-align: middle;
+            background: #95a5a6;
+        }
+
+        .paginator .prev {
+            text-indent: -1000px;
+            margin-right: 20px;
+            background-image: url("https://htmlacademy.ru/assets/course14/arrows.png");
+            background-repeat: no-repeat;
+            background-position: 0px 0px;
+        }
+
+        .paginator .next {
+            text-indent: -1000px;
+            margin-left: 20px;
+            background-image: url("https://htmlacademy.ru/assets/course14/arrows.png");
+            background-repeat: no-repeat;
+            background-position: 0px -40px;
+        }
+
+        .paginator .current {
+            background-color: #16a085;
+        }
+
+        .paginator .disabled {
+            opacity: 0.3;
+        }
+
+        .paginator a:hover {
+            background-color: #2ecc71;
+        }
+    </style>
+
+    <div class="paginator">
+        {#        <ul>#}
+        {% if pages.has_previous %}
+            {#                <a href="/">First page</a>#}
+            <a href="?page={{ pages.previous_page_number }}">&laquo;Previous</a>
+        {% else %}
+            <a>&laquo;</a>
+        {% endif %}
+        {% for page in  pages.paginator.page_range %}
+
+            {% if page ==  page_num %}
+                <a class="current" href="?page={{ page }}">{{ page }}</a>
+
+            {% else %}
+                <a href="?page={{ page }}">{{ page }}</a>
+            {% endif %}
+
+        {% endfor %}
+        {% if  pages.has_next %}
+            <a href="?page={{ pages.next_page_number }}">&raquo;Next</a>
+            <a href="?page={{ end_page }}">>Last</a>
+        {% else %}
+            <a>&raquo;</a>
+        {% endif %}
+    </div>
+
+    <span class="likebtn-wrapper" data-lang="ru" data-identifier="item_1"></span>
 {% endblock %}

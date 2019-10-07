@@ -1,25 +1,16 @@
 import jwt
 from django.contrib.auth import user_logged_in, authenticate, login
-from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
-from django.template.context_processors import csrf
-from rest_framework import status
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.renderers import JSONRenderer
 from rest_framework_jwt.serializers import jwt_payload_handler
 
 from Coax import settings
-from authentications.forms import SignUpForm
-from lesson.models import Lesson
-from .models import User
-
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status, viewsets
 from django.contrib.auth import logout, authenticate, login
-from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, HttpResponse, redirect, render_to_response
 from django.template.context_processors import csrf
-from django.views.generic import TemplateView
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
@@ -27,39 +18,23 @@ from .forms import SignUpForm
 from django.contrib import messages
 from .models import *
 
-#
 from authentications.serializers import UserSerializer
 
 
 class CreateUserAPIView(APIView):
-    # Allow any user (authenticated or not) to access this url
     permission_classes = (AllowAny,)
 
     def post(self, request):
         user = request.data
-        print(user)
         try:
             print(user['password'])
         except:
             print(user)
-        # user['password'] = "f"
-        # print(user['password'])
+
         serializer = UserSerializer(data=user)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-
-class MainView(TemplateView):
-    context = {}
-    template_name = "lesson/home.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(data=Lesson.objects.all(), **kwargs)
-        # context['data'] = Lesson.objects.all()
-        print(context)
-        # context['cash'] = balance(self.request)
-        return context
 
 
 class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
@@ -71,6 +46,7 @@ class UserRetrieveUpdateAPIView(RetrieveUpdateAPIView):
         # serializer to handle turning our `User` object into something that
         # can be JSONified and sent to the client.
         serializer = self.serializer_class(request.user)
+
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -110,7 +86,7 @@ def authenticate_user(request):
             res = {
                 'error': 'can not authenticate with the given credentials or the account has been deactivated'}
             return Response(res, status=status.HTTP_403_FORBIDDEN)
-    except KeyError:
+    except (KeyError, User.DoesNotExist):
         res = {'error': 'please provide a email and a password'}
         return Response(res)
 
@@ -128,7 +104,7 @@ def registration(request):
                                        password=newuser_form.cleaned_data['password2'], )
                 login(request, newuser)
 
-                messages.success(request, f"Вітаємо, {request.POST.get('first_name', '')} Ви успішно зареєструвались")
+                messages.success(request, f"Hello, you have successfully registered")
                 return redirect("/")
             else:
                 args['form'] = newuser_form
@@ -146,21 +122,84 @@ def user_login(request):
             password = request.POST.get("password", "")
             user = authenticate(email=email, password=password)
             if user is not None:
-                login(request, user)
-                messages.success(request, "Ви успішно ввійшли")
+                # raw_pass = form.cleaned_data.get('password1')
+                login(request, user,  backend='django.contrib.auth.backends.ModelBackend')
+                messages.success(request, f"Welcome {email}")
                 return redirect("/")
             else:
-                args['login_error'] = "Невірний email або пароль"
+                args['login_error'] = "Invalid email or password"
                 return render_to_response('lesson/login.html', args)
         else:
             return render_to_response("lesson/login.html", args)
     else:
         return redirect("/")
 
+# def user_login(request):
+#     args = {}
+#     args.update(csrf(request))
+#     if request.POST:
+#         email = request.POST.get("email", "")
+#         password = request.POST.get("password", "")
+#         print(email, password)
+#         URL = reverse('token_obtain_pair')
+#         print(URL)
+#         headers = {
+#             'Accept': 'application/json',
+#             'Content-Type': 'application/json'
+#         }
+#         body = {'email': f'{email}', 'password': f'{password}'}
+#         resp = requests.request("POST", 'http://127.0.0.1:8000'+URL, data=json.dumps(body), headers=headers)
+#         print(resp.json())
+#         # user = authenticate(email=email, password=password)
+#     else:
+#         return render_to_response("lesson/login.html", args)
+#     return redirect("/")
 
 def user_logout(request):
     logout(request)
     return redirect("/")
+
+
+class UserAPIViewSet(viewsets.ModelViewSet):
+    """
+    list:
+    Retrive all lesson
+
+    '''
+    create:
+    Add new lesson
+
+
+
+    '''
+    '''
+    read:
+    Retrive lesson id
+
+    '''
+
+    '''
+    update:
+    Update lesson id
+
+    '''
+    '''
+    partial_update:
+    Partial update lesson id
+
+    '''
+    '''
+    delete:
+    Delete lesson id
+
+    '''
+
+    """
+    serializer_class = UserSerializer
+    queryset = User.objects.all()
+    permission_classes = (AllowAny,)
+    renderer_classes = (JSONRenderer,)
+
 
 # class HelloView(APIView):
 #     permission_classes = (IsAuthenticated,)

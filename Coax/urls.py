@@ -17,7 +17,7 @@ from django.urls import path, include
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
-
+from lesson.views import MainView, vote, EditLesson, AddLessonView
 from rest_framework_simplejwt import views as jwt_views
 from lesson.urls import base_patterns
 from django.contrib import admin
@@ -25,7 +25,7 @@ from django.contrib import admin
 
 schema_view = get_schema_view(
     openapi.Info(
-        title='My API title',
+        title='Lesson API ',
         default_version='v1',
         description= "Description",
         contact= openapi.Contact(email='valentynshvets@icloud.com'),
@@ -42,13 +42,21 @@ api_patterns = [
 
     path('token/', jwt_views.TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
-    path('get/', include(base_patterns), name='get'),
+    # path('get/', include(base_patterns), name='get'),
+    # path('lessons/', include(), name='get'),
+    path('lessons/', include('lesson.urls')),
+    path('', include('authentications.urls')),
 
 ]
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('docs/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('api/', include(api_patterns)),
-    path('', include('authentications.urls')),
-    path('', include('lesson.urls')),
+    path('', MainView.as_view(), name='home'),
+    path('page/<int:page>/', MainView.as_view()),
+    path('vote/<int:lesson_id>', vote, name='like'),
+    path('edit/', EditLesson.as_view(), name='edit'),
+    path('add_lesson/', AddLessonView.as_view(), name='add_lesson'),
+
+
 ]
