@@ -36,7 +36,7 @@ dj-static==0.0.6
 Django
 django-allauth==0.39.1
 django-filter==2.2.0
-djangorestframework==3.10.3
+djangorestframework==3.11.2
 djangorestframework-camel-case==1.1.1
 djangorestframework-jwt==1.11.0
 djangorestframework-simplejwt==4.3.0
