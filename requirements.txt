@@ -102,7 +102,7 @@ pdfminer.six==20181108
 pexpect==4.7.0
 pickleshare==0.7.5
 pika==1.1.0
-Pillow==6.0.0
+Pillow==8.3.2
 pluggy==0.12.0
 ply==3.11
 pprint==0.1
