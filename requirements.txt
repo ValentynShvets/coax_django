@@ -123,7 +123,7 @@ pyexchange==0.6
 Pygments==2.3.1
 PyHamcrest==1.9.0
 PyInstaller==3.5
-PyJWT==1.7.1
+PyJWT==2.4.0
 pymongo==3.8.0
 PyMySQL==0.9.3
 pyOpenSSL==19.0.0
